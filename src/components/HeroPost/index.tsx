@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
-import styles from './styles.module.scss';
 
 import { AiOutlineCalendar } from 'react-icons/ai';
 import { BsPerson } from 'react-icons/bs';
@@ -16,7 +15,6 @@ interface Post {
 
 export function HeroPost({ uid, date, title, subtitle, author }: Post) {
   return (
-    <section>
       <div>
         <Link href={`/post/${uid}`} key={uid}>
           <a>
@@ -35,6 +33,5 @@ export function HeroPost({ uid, date, title, subtitle, author }: Post) {
           <span>{author}</span>
         </div>
       </div>
-    </section>
   );
 }

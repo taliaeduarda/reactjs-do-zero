@@ -10,7 +10,6 @@ import Header from '../../components/Header';
 import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 
-import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
 
 import { AiOutlineCalendar } from 'react-icons/ai';
@@ -40,7 +39,6 @@ interface PostProps {
 
 export default function Post({ post }: PostProps) {
   const router = useRouter();
-  console.log(router.isFallback);
 
   if (router.isFallback) {
     return <button>Carregando...</button>;
@@ -73,18 +71,18 @@ export default function Post({ post }: PostProps) {
       </Head>
       <Header />
       <img className={styles.banner} src={post.data.banner.url} alt="banner" />
-      <div className={commonStyles.container}>
+      <main className={styles.container}>
         <article className={styles.post}>
           <h1>{post.data.title}</h1>
           <div className={styles.info}>
+            <AiOutlineCalendar size="1.25rem" />
             <time>{formattedDate}</time>
             <BsPerson size="1.25rem" />
             <span>{post.data.author}</span>
             <FiClock size="1.25rem" />
             <span>{readingTime} min</span>
           </div>
-
-          <div className={styles.content}>
+          <div className={styles.postContent}>
             {post.data.content.map(({ heading, body }) => (
               <div key={heading}>
                 <h3>{heading}</h3>
@@ -95,7 +93,7 @@ export default function Post({ post }: PostProps) {
             ))}
           </div>
         </article>
-      </div>
+      </main>
     </>
   );
 }

@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { GetStaticProps } from 'next';
-import Head from 'next/head'
+import Head from 'next/head';
 
-import Header from '../components/Header'
+import Header from '../components/Header';
 import { HeroPost } from '../components/HeroPost';
 
-import { getPrismicClient } from '../services/prismic'
-import Prismic from '@prismicio/client'
+import { getPrismicClient } from '../services/prismic';
+import Prismic from '@prismicio/client';
 
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
@@ -28,15 +28,14 @@ interface PostPagination {
 
 interface HomeProps {
   postsPagination: PostPagination;
-  preview: boolean;
 }
 
-export default function Home({postsPagination, preview}: HomeProps) {
+export default function Home({ postsPagination }: HomeProps) {
   const [posts, setPosts] = useState<Post[]>(postsPagination.results);
-  const nextlink = postsPagination.next_page
+  const nextlink = postsPagination.next_page;
 
   async function handleLoadMore() {
-    const newPosts = await fetch(nextlink).then(response => response.json())
+    const newPosts = await fetch(nextlink).then(response => response.json());
 
     const morePosts: Post[] = newPosts.results.map(post => {
       return {
@@ -50,19 +49,18 @@ export default function Home({postsPagination, preview}: HomeProps) {
       };
     });
 
-    setPosts([...posts, ...morePosts])
-    
+    setPosts([...posts, ...morePosts]);
   }
 
   return (
     <>
       <Head>
-          <title>Home | spacetraveling</title>
-      </Head> 
+        <title>Home | spacetraveling</title>
+      </Head>
       <Header />
 
       <main className={commonStyles.container}>
-        <div className={`${styles.posts} ${commonStyles.postsContainer}`}>
+        <div className={styles.posts}>
           {posts.map(post => (
             <HeroPost
               uid={post.uid}
@@ -72,25 +70,30 @@ export default function Home({postsPagination, preview}: HomeProps) {
               author={post.data.author}
             />
           ))}
-          {nextlink && 
-          <button type="button" onClick={handleLoadMore}
-          >Carregar mais posts</button>}
+          {nextlink && (
+            <button type="button" onClick={handleLoadMore}>
+              Carregar mais posts
+            </button>
+          )}
         </div>
       </main>
     </>
-  )
+  );
 }
 
-export const getStaticProps: GetStaticProps = async ({ preview = false, previewData }) => {
-  const prismic = getPrismicClient()
+export const getStaticProps: GetStaticProps = async ({
+  preview = false,
+  previewData,
+}) => {
+  const prismic = getPrismicClient();
   const postsResponse = await prismic.query(
     [Prismic.Predicates.at('document.type', 'posts')],
     {
       fetch: ['posts.title', 'posts.subtitle', 'posts.author'],
       pageSize: 20,
     }
-    )
-  
+  );
+
   const posts = postsResponse.results.map(post => {
     return {
       uid: post.uid,
@@ -100,10 +103,10 @@ export const getStaticProps: GetStaticProps = async ({ preview = false, previewD
         subtitle: post.data.subtitle,
         author: post.data.author,
       },
-    }
-  })
-  
-  const nextPage = postsResponse.next_page
+    };
+  });
+
+  const nextPage = postsResponse.next_page;
 
   return {
     props: {
@@ -111,7 +114,6 @@ export const getStaticProps: GetStaticProps = async ({ preview = false, previewD
         results: posts,
         next_page: nextPage,
       },
-      preview,
     },
-    }
-  }
+  };
+};
